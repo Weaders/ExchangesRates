@@ -21,7 +21,6 @@ namespace ExchangesRates
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMemoryCache();
-            services.AddResponseCaching();
             services.AddHttpClient();
             services.AddTransient<ICurrencyService, CurrencyService>();
             services.AddControllers(opts => opts.Filters.Add(new HttpExceptionFilter()));
@@ -34,13 +33,9 @@ namespace ExchangesRates
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseResponseCaching();
-
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllers();
