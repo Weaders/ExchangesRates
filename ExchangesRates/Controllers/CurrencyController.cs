@@ -1,7 +1,9 @@
 ﻿using ExchangesRates.Domain.Models.CurrencyService;
 using ExchangesRates.Domain.Services;
+using ExchangesRates.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using static ExchangesRates.Filters.HttpExceptionFilter;
 
@@ -26,8 +28,11 @@ namespace ExchangesRates.Controllers
             {
                 GetCurrencyOpts opts = new GetCurrencyOpts(page ?? 1, count ?? 5);
 
-                var result = await _currencyService.GetCurrenciesAsync(opts);
-                return Ok(result);
+                var currencies = await _currencyService.GetCurrenciesAsync(opts);
+
+                var viewModels = currencies.Select(x => new CurrencyViewModel(x));
+
+                return Ok(viewModels);
 
             }
             catch (Exception e)
@@ -43,15 +48,15 @@ namespace ExchangesRates.Controllers
         {
             try
             {
-                var result = await _currencyService.GetCurrencyAsync(currencyId);
+                var currencyData = await _currencyService.GetCurrencyAsync(currencyId);
 
-                if (result == null)
+                if (currencyData == null)
                 {
                     return NotFound();
                 }
                 else
                 {
-                    return Ok(result);
+                    return Ok(new CurrencyViewModel(currencyData));
                 }
 
             }
